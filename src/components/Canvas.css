@@ -1,0 +1,17 @@
+.cnvs {
+  display: column;
+  justify-content: space-between;
+  background-color: orange;
+  /* height: 85vh; */
+  margin: 10px;
+  padding: 20px 10px;
+  border-radius: 13px;
+}
+@media (max-width: 699px) {
+  
+}
+@media (min-width: 700px) {
+    .cnvs {
+        width: 40%;
+      }
+}
