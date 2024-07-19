@@ -4,8 +4,9 @@ import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import "./Canvas.css";
 import TShapeSpline from "./tshape";
+import EdgeDetection from "./edgedetection";
 
-const Scene = ({ points }) => {
+const Scene = ({ points, setPoints }) => {
   const [exportSTL, setExportSTL] = useState(false);
 
   console.log("==>", points);
@@ -33,14 +34,14 @@ const Scene = ({ points }) => {
 
   return (
     <div className="cnvs">
-      {points && points.length > 0 ? (
-        <>          
+      {points && points.length > 1 ? (
+        <>
           <Canvas
             className="Can"
             style={{ background: "#000", height: "30vh", borderRadius: 10 }}
           >
             <ambientLight />
-            <pointLight position={[10, 10, 10]} />
+            <pointLight position={[10, 100, 10]} intensity={9} />
             <axesHelper args={[1000]} />
             <gridHelper />
             <TShapeSpline paths={points} exportSTL={exportSTL} />
@@ -50,7 +51,7 @@ const Scene = ({ points }) => {
               enableRotate={true}
               zoomSpeed={0.5}
               dampingFactor={0.1}
-              target={[xcntr, ycntr, 4]} // Center of rotation (optional)
+              target={[xcntr, -ycntr, 4]} // Center of rotation (optional)
             />
           </Canvas>
           <button onClick={() => setExportSTL((e) => !e)}>Indir STL</button>
@@ -61,6 +62,8 @@ const Scene = ({ points }) => {
           style={{ background: "#000", height: "30vh", borderRadius: 10 }}
         ></div>
       )}
+      <br/>
+      <EdgeDetection setPoints={setPoints} />
     </div>
   );
 };
