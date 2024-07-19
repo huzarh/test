@@ -42,8 +42,8 @@ const Scene = ({ points, setPoints }) => {
           >
             <ambientLight />
             <pointLight position={[10, 100, 10]} intensity={9} />
-            <axesHelper args={[1000]} />
-            <gridHelper />
+            {/* <axesHelper args={[1000]} />
+            <gridHelper /> */}
             <TShapeSpline paths={points} exportSTL={exportSTL} />
             <OrbitControls
               enablePan={true}
