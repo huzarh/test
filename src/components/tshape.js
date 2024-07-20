@@ -47,7 +47,7 @@ const TShapeSpline = ({ paths, exportSTL }) => {
 
   return (
     <mesh ref={meshRef} geometry={geometry}>
-      <meshStandardMaterial color={"#089ae5"} />
+      <meshStandardMaterial color={"white"} />
     </mesh>
   );
 };

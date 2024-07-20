@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import css from "./drawing.module.css";
-import img from "../assets/Снимок экрана 2024-07-18 в 2.50.08 AM.png"
 
 const ShapeDrawer = ({ setPoints, points }) => {
   const canvasRef = useRef(null);
   const [draggingIndex, setDraggingIndex] = useState(null);
+  const [draggingControlPoint, setDraggingControlPoint] = useState(null);
 
   const pointStyle = {
     radius: 5,
@@ -16,6 +16,8 @@ const ShapeDrawer = ({ setPoints, points }) => {
     color: "grey",
     width: 5,
   };
+
+  const controlPoints = useRef([]);
 
   const updateCanvasSize = () => {
     const canvas = canvasRef.current;
@@ -43,6 +45,15 @@ const ShapeDrawer = ({ setPoints, points }) => {
 
   const handleMouseDown = (e) => {
     const { x, y } = getMousePosition(e);
+
+    for (let i = 0; i < controlPoints.current.length; i++) {
+      const controlPoint = controlPoints.current[i];
+      if (Math.hypot(controlPoint.x - x, controlPoint.y - y) < 5) {
+        setDraggingControlPoint(i);
+        return;
+      }
+    }
+
     const index = points.findIndex(
       (point) => Math.hypot(point[0] - x, point[1] - y) < 5
     );
@@ -55,72 +66,91 @@ const ShapeDrawer = ({ setPoints, points }) => {
 
   const handleMouseUp = () => {
     setDraggingIndex(null);
+    setDraggingControlPoint(null);
   };
 
   const handleMouseMove = (e) => {
-    if (draggingIndex === null) return;
     const { x, y } = getMousePosition(e);
-    const newPoints = [...points];
-    newPoints[draggingIndex] = [x, y];
-    setPoints(newPoints);
+
+    if (draggingControlPoint !== null) {
+      const newControlPoints = [...controlPoints.current];
+      newControlPoints[draggingControlPoint] = { x, y };
+      controlPoints.current = newControlPoints;
+      draw();
+      return;
+    }
+
+    if (draggingIndex !== null) {
+      const newPoints = [...points];
+      newPoints[draggingIndex] = [x, y];
+      setPoints(newPoints);
+    }
   };
 
-  const draw = (ctx, points) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const draw = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw points (dots)
-    points.forEach((point, index) => {
+    if (points.length > 1) {
       ctx.beginPath();
-      ctx.arc(point[0], point[1], pointStyle.radius || 3, 0, 2 * Math.PI);
-      ctx.fillStyle = pointStyle.fillColor || "white";
-      ctx.fill();
+      ctx.moveTo(points[0][0], points[0][1]);
 
-      if (pointStyle.borderColor) {
-        ctx.lineWidth = pointStyle.borderWidth || 1;
-        ctx.strokeStyle = pointStyle.borderColor;
-        ctx.stroke();
+      for (let i = 1; i < points.length; i++) {
+        const cp = controlPoints.current[i - 1];
+        ctx.quadraticCurveTo(cp.x, cp.y, points[i][0], points[i][1]);
       }
 
-      // Draw lines between points
-      if (index > 0) {
-        const prevPoint = points[index - 1];
-        ctx.beginPath();
-        ctx.moveTo(prevPoint[0], prevPoint[1]);
-        ctx.lineTo(point[0], point[1]);
-        ctx.strokeStyle = lineStyle.color || "white";
-        ctx.lineWidth = lineStyle.width || 2;
-        if (lineStyle.dash) {
-          ctx.setLineDash(lineStyle.dash);
-        } else {
-          ctx.setLineDash([]);
-        }
+      ctx.strokeStyle = lineStyle.color;
+      ctx.lineWidth = lineStyle.width;
+      ctx.stroke();
+    }
+
+    points.forEach((point) => {
+      ctx.beginPath();
+      ctx.arc(point[0], point[1], pointStyle.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = pointStyle.fillColor;
+      ctx.fill();
+      if (pointStyle.borderColor) {
+        ctx.lineWidth = pointStyle.borderWidth;
+        ctx.strokeStyle = pointStyle.borderColor;
         ctx.stroke();
       }
     });
 
-    // Draw line connecting last point to the first point
-    if (points.length > 2) {
-      const firstPoint = points[0];
-      const lastPoint = points[points.length - 1];
+    controlPoints.current.forEach((cp) => {
       ctx.beginPath();
-      ctx.moveTo(lastPoint[0], lastPoint[1]);
-      ctx.lineTo(firstPoint[0], firstPoint[1]);
-      ctx.strokeStyle = lineStyle.color || "white";
-      ctx.lineWidth = lineStyle.width || 2;
-      if (lineStyle.dash) {
-        ctx.setLineDash(lineStyle.dash);
-      } else {
-        ctx.setLineDash([]);
-      }
-      ctx.stroke();
-    }
+      ctx.arc(cp.x, cp.y, pointStyle.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = "#089ae5";
+      ctx.fill();
+    });
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    draw(ctx, points);
-  }, [points, pointStyle, lineStyle]);
+    controlPoints.current = points.map((point, index) => {
+      if (index === 0) return null;
+      const prevPoint = points[index - 1];
+      return {
+        x: (point[0] + prevPoint[0]) / 2,
+        y: (point[1] + prevPoint[1]) / 2,
+      };
+    }).slice(1);
+    draw();
+  }, [points]);
+
+  useEffect(() => {
+    if (draggingIndex !== null) {
+      controlPoints.current = points.map((point, index) => {
+        if (index === 0) return null;
+        const prevPoint = points[index - 1];
+        return {
+          x: (point[0] + prevPoint[0]) / 2,
+          y: (point[1] + prevPoint[1]) / 2,
+        };
+      }).slice(1);
+    }
+    draw();
+  }, [points]);
 
   return (
     <canvas
@@ -129,7 +159,7 @@ const ShapeDrawer = ({ setPoints, points }) => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-     />
+    />
   );
 };
 

@@ -8,6 +8,9 @@ import EdgeDetection from "./edgedetection";
 
 const Scene = ({ points, setPoints }) => {
   const [exportSTL, setExportSTL] = useState(false);
+  const [maxSize, setMaxSize] = useState(10);
+  const [height, setHeight] = useState(5);
+  const [thickness, setThickness] = useState(1);
 
   console.log("==>", points);
 
@@ -28,9 +31,13 @@ const Scene = ({ points, setPoints }) => {
     // Calculate the center value after the component has mounted or points change
     setXcntr((maxX + minX) / 2);
     setYcntr((maxY + minY) / 2);
-  }, [maxX, maxY, minX, minY]); // Added minX and minY to dependency array
+  }, [maxX, maxY, minX, minY]);
 
-  // Function to export STL file (for testing purposes)
+  const handleExport = () => {
+    // You can pass these options to your export logic
+    console.log("Exporting with options:", { maxSize, height, thickness });
+    setExportSTL(true);
+  };
 
   return (
     <div className="cnvs">
@@ -54,7 +61,37 @@ const Scene = ({ points, setPoints }) => {
               target={[xcntr, -ycntr, 4]} // Center of rotation (optional)
             />
           </Canvas>
-          <button onClick={() => setExportSTL((e) => !e)}>Indir STL</button>
+          <br />
+          <section>
+            <label>
+              Maksimum Boyut:{" "}
+              <input
+                type="number"
+                value={maxSize}
+                onChange={(e) => setMaxSize(e.target.value)}
+              />
+            </label>
+            <br />
+            <label>
+              Yükseklik:{" "}
+              <input
+                type="number"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+              />
+            </label>
+            <br />
+            <label>
+              Kalınlık:{" "}
+              <input
+                type="number"
+                value={thickness}
+                onChange={(e) => setThickness(e.target.value)}
+              />
+            </label>
+            <br />
+            <button onClick={handleExport}>Indir STL</button>
+          </section>
         </>
       ) : (
         <div
@@ -62,8 +99,7 @@ const Scene = ({ points, setPoints }) => {
           style={{ background: "#000", height: "30vh", borderRadius: 10 }}
         ></div>
       )}
-      <br/>
-      <EdgeDetection setPoints={setPoints} />
+      <br />
     </div>
   );
 };

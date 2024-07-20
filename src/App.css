@@ -13,25 +13,41 @@
     justify-content: space-between;
    }
   .drawsec{
+    display:flex;
     width: 58%;
     height: 600px;
     height: 85vh;
   }
+  .bottom{
+    display:flex;
+    flex-direction: column; 
+  }
+  
 }
 
 @media (max-width: 699px) {
   .container {
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
     text-align: center;
-    
+    justify-content: space-between;
+   } 
+  .bottom{
+    display:flex;
+    padding: 10px; 
+  }
+  hr{
+    display: none;
+  }
+  button{
+    height: 50px;
   }
 }
-.drawsec{  
+.drawsec{   
   margin: 10px;
   padding: 20px 10px;
   background-color: orange;
-   /* width: 100%; */
+   /* width: 100; */
   color: aliceblue;
   border-radius: 13px;
 }
@@ -47,17 +63,19 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-.bottom{
-  display: flex;
-  width: 100%;
+.bottom{ 
+  width: 6%;
+  margin-right: 20px;
   /* background-color: gray; */
-  justify-content: space-between;
+  justify-content:flex-start;
+   gap: 15px;
 }
 
  
 button{
-  margin-top: 10px;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 5px 10px;
   border-radius: 8px;
   font-size: large;

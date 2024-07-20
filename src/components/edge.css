@@ -6,6 +6,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    width: 50px;
   }
   .custom__image-container label {
     display: flex;

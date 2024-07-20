@@ -104,7 +104,7 @@ const EdgeDetection = ({setPoints}) => {
         </div>
 
         <img ref={imageRef} alt="source" style={{ display: 'none' }} />
-        <canvas style={{width:200,height:"auto"}} ref={canvasRef}></canvas>
+        <canvas style={{width:200,height:0, display: 'none'}} ref={canvasRef}></canvas>
         {/* <input
           type="file"
           id="image-input"

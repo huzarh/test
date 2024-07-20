@@ -6,10 +6,12 @@ import elma from "./components/elma.json";
 import yildiz from "./components/yildiz.json";
 import kare from "./components/kare.json";
 import ucgen from "./components/ucgen.json";
-import sobel from 'sobel';
-import ImageProcessingComponent from "./img";
 import EdgeDetection from "./components/edgedetection";
 import { FcFullTrash } from "react-icons/fc";
+import { FaRegStar } from "react-icons/fa6";
+import { FaSquare } from "react-icons/fa";
+import { IoMdFlower } from "react-icons/io";
+import { CiApple } from "react-icons/ci";
 
 
 function App() {
@@ -30,21 +32,37 @@ function App() {
       <header className="App-header">
         <h1>Kurabiye Kalıbı 0.1</h1>
       </header>
-        
+
       <div className="container">
         <section className="drawsec">
-          <header style={{ textAlign: "start" }}>
+          {/* <header style={{ textAlign: "start" }}>
             Çizarak istediğiniz kalıbı oluşturun !!
-          </header>
-          <ShapeDrawer setPoints={setPoints} points={points} />
+          </header> */}
           <div className="bottom">
-            <button ><FcFullTrash onClick={rv} cursor="pointer" /> </button>
-            <button onClick={chngae2}>Yıldız</button>
-            <button onClick={chngae3}>Kare</button>
-            <button onClick={chngae4}>Üçgen</button>
+          <EdgeDetection setPoints={setPoints} />
+          <hr style={{color:"black",border:"0.5px solid #089ae5",height:1,width:"100%"}}/>
+
+            <button onClick={rv}>
+              <FcFullTrash cursor="pointer" />{" "}
+            </button>
+            <hr style={{color:"black",border:"0.5px solid #089ae5",height:1,width:"100%"}}/>
+
+            <button onClick={chngae2}>
+              <FaRegStar />
+            </button>
+            <button onClick={chngae3}>
+              <FaSquare />
+            </button>
+            <button onClick={chngae4}>
+              <IoMdFlower />
+            </button>
+            <button onClick={chngae}>
+              <CiApple />
+            </button>
           </div>
+          <ShapeDrawer setPoints={setPoints} points={points} />
         </section>
-        <Scene points={points} setPoints={setPoints}/>
+        <Scene points={points} setPoints={setPoints} />
       </div>
     </div>
   );
